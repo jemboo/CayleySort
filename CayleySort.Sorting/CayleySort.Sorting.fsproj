@@ -6,14 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="SysExt.fs" />
-    <Compile Include="UMXext.fs" />
-    <Compile Include="Result.fs" />
+    <Compile Include="SortingTypes.fs" />
+    <Compile Include="Ce.fs" />
+    <Compile Include="Sorter.fs" />
+    <Compile Include="SorterSet.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FSharp.UMX" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CayleySort.Core\CayleySort.Core.fsproj" />
   </ItemGroup>
 
 </Project>

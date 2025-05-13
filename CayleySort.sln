@@ -3,11 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CayleySort", "CayleySort\CayleySort.fsproj", "{30839251-6170-4626-A9E7-86C3BD3BCA5C}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CayleySort.Core", "CayleySort.Core\CayleySort.Core.fsproj", "{525D5E2F-35E4-4523-A0E6-1CAA10DB7010}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CayleySort.Core.Test", "CayleySort.Core.Test\CayleySort.Core.Test.fsproj", "{C2AC2EEF-E349-4FFE-BF23-309EAAC196E1}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CayleySort.Sorting", "CayleySort.Sorting\CayleySort.Sorting.fsproj", "{57AE6634-91DB-460C-8E94-4A41474D6085}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CayleySort.Sorting.Test", "CayleySort.Sorting.Test\CayleySort.Sorting.Test.fsproj", "{460A678C-BCA5-416D-8E14-BD126A50F126}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CayleySort.Serialization", "CayleySort.Serialization\CayleySort.Serialization.fsproj", "{E55892FB-55D0-4784-8D9B-C5BF03E1FEF3}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CayleySort.Serialization.Test", "CayleySort.Serialization.Test\CayleySort.Serialization.Test.fsproj", "{CBE23E0D-4DA7-43D7-9D98-94F1BCABF082}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +21,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{30839251-6170-4626-A9E7-86C3BD3BCA5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{30839251-6170-4626-A9E7-86C3BD3BCA5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{30839251-6170-4626-A9E7-86C3BD3BCA5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{30839251-6170-4626-A9E7-86C3BD3BCA5C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{525D5E2F-35E4-4523-A0E6-1CAA10DB7010}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{525D5E2F-35E4-4523-A0E6-1CAA10DB7010}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{525D5E2F-35E4-4523-A0E6-1CAA10DB7010}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +29,22 @@ Global
 		{C2AC2EEF-E349-4FFE-BF23-309EAAC196E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2AC2EEF-E349-4FFE-BF23-309EAAC196E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2AC2EEF-E349-4FFE-BF23-309EAAC196E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57AE6634-91DB-460C-8E94-4A41474D6085}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57AE6634-91DB-460C-8E94-4A41474D6085}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57AE6634-91DB-460C-8E94-4A41474D6085}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57AE6634-91DB-460C-8E94-4A41474D6085}.Release|Any CPU.Build.0 = Release|Any CPU
+		{460A678C-BCA5-416D-8E14-BD126A50F126}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{460A678C-BCA5-416D-8E14-BD126A50F126}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{460A678C-BCA5-416D-8E14-BD126A50F126}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{460A678C-BCA5-416D-8E14-BD126A50F126}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E55892FB-55D0-4784-8D9B-C5BF03E1FEF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E55892FB-55D0-4784-8D9B-C5BF03E1FEF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E55892FB-55D0-4784-8D9B-C5BF03E1FEF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E55892FB-55D0-4784-8D9B-C5BF03E1FEF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBE23E0D-4DA7-43D7-9D98-94F1BCABF082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBE23E0D-4DA7-43D7-9D98-94F1BCABF082}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBE23E0D-4DA7-43D7-9D98-94F1BCABF082}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBE23E0D-4DA7-43D7-9D98-94F1BCABF082}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

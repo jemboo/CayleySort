@@ -7,13 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ResultTests.fs" />
+    <Compile Include="SerializationTests.fs" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
-    <PackageReference Include="FSharp.UMX" Version="1.1.0" />
-    <PackageReference Include="FsUnit.xUnit" Version="7.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
@@ -21,6 +20,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CayleySort.Core\CayleySort.Core.fsproj" />
+    <ProjectReference Include="..\CayleySort.Serialization\CayleySort.Serialization.fsproj" />
+    <ProjectReference Include="..\CayleySort.Sorting\CayleySort.Sorting.fsproj" />
   </ItemGroup>
 
 </Project>
