@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="SequencePropertyTests.fs" />
+    <Compile Include="ArrayProductTests.fs" />
     <Compile Include="ResultTests.fs" />
   </ItemGroup>
 
