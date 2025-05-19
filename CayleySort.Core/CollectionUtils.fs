@@ -1,7 +1,54 @@
 ﻿namespace CayleySort.Core
 open LanguagePrimitives
+open System
+open System.Collections
+open System.Runtime.CompilerServices
 
 module CollectionUtils =
+
+    let rec compareAny 
+                (o1: obj) 
+                (o2: obj) 
+        =
+        match (o1, o2) with
+        | (:? IComparable as o1), (:? IComparable as o2) -> Some(compare o1 o2)
+        | (:? IEnumerable as arr1), (:? IEnumerable as arr2) ->
+            Seq.zip (arr1 |> Seq.cast) (arr2 |> Seq.cast)
+            |> Seq.choose (fun (a, b) -> compareAny a b)
+            |> Seq.skipWhile ((=) 0)
+            |> Seq.tryHead
+            |> Option.defaultValue 0
+            |> Some
+        | (:? ITuple as tup1), (:? ITuple as tup2) ->
+            let tupleToSeq (tuple: ITuple) =
+                seq {
+                    for i in 0 .. tuple.Length do
+                        yield tuple.[i]
+                }
+
+            compareAny (tupleToSeq tup1) (tupleToSeq tup2)
+        | _ -> None
+
+    let areEqual (o1: obj) (o2: obj) =
+        match compareAny o1 o2 with
+        | Some v -> v = 0
+        | None -> false
+
+
+    // Generic array equality check
+    let inline arrayEquals< ^a when ^a: equality> (xs: ^a[]) (ys: ^a[]) : bool =
+        if xs.Length <> ys.Length then false
+        else Seq.forall2 (fun x y -> x = y) xs ys
+
+    //returns the last n items of the list in the original order
+    let rec last n xs =
+        if List.length xs <= n then xs else last n xs.Tail
+
+    //returns the first n items of the list in the original order,
+    //or all the items if it's shorter than n
+    let first n (xs: 'a list) =
+        let mn = min n xs.Length
+        xs |> List.take mn
 
     let cartesianProduct 
             (seq_a: seq<'a>) 

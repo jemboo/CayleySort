@@ -1,7 +1,32 @@
 ﻿namespace CayleySort.Core
 open LanguagePrimitives
+open System
+open CollectionUtils
 
 module SequenceProperties =
+
+    // Generic identity array: [0 .. order-1]
+    let inline identity< ^a when ^a: (static member Zero: ^a)
+                            and ^a: (static member One: ^a)
+                            and ^a: (static member (+): ^a * ^a -> ^a)>
+            (order: int) : ^a[] =
+        if order < 0 then raise (ArgumentException("Order must be non-negative"))
+        let result = Array.zeroCreate order
+        let one = GenericOne<^a>
+        let mutable current = GenericZero<^a>
+        for i = 0 to order - 1 do
+            result.[i] <- current
+            current <- current + one
+        result
+
+    // Generic isIdentity check
+    let inline isIdentity< ^a when ^a: equality
+                              and ^a: (static member Zero: ^a)
+                              and ^a: (static member One: ^a)
+                              and ^a: (static member (+): ^a * ^a -> ^a)>
+            (wh: ^a[]) : bool =
+        arrayEquals wh (identity wh.Length)
+
 
     let inline distanceSquaredUnsafe< ^a when ^a: (static member Zero: ^a)
                                         and ^a: (static member (+): ^a * ^a -> ^a)
@@ -14,6 +39,7 @@ module SequenceProperties =
             acc <- acc + (a.[i] - b.[i]) * (a.[i] - b.[i])
             i <- i + 1
         acc
+
 
     type DistanceSquaredError =
         | UnequalLengths of aLength: int * bLength: int
@@ -85,7 +111,8 @@ module SequenceProperties =
     | NullArray
     | IndexOutOfBounds of value: int
 
-    let inline isPermutation< ^a when ^a: (static member op_Explicit: ^a -> int)> (a: ^a[]) 
+    // returns true if ^a[] is a permutation of [|0 .. (^a.length - 1)|]
+    let inline isPermutationSafe< ^a when ^a: (static member op_Explicit: ^a -> int)> (a: ^a[]) 
         : Result<bool, IsPermutationError> =
         if isNull a then Error NullArray
         else
@@ -109,6 +136,78 @@ module SequenceProperties =
                     match error with
                     | Some e -> Error e
                     | None -> Ok (valid)
+
+    type IsPermutationArraySegmentError =
+        | NullLongArray
+        | InvalidLongArrayLength of expectedMultiple: int * actual: int
+        | InvalidSegmentLength of length: int
+        | NonWholeNumberSegments of longLength: int * shortLength: int
+        | IndexOutOfBounds of segmentIndex: int * value: int
+    // return is true for each index i where longArray[i*segmentLength .. ((i + 1)*segmentLength - 1)]
+    // is a permutation
+    let inline isPermutationArraySegmentSafe< ^a when ^a: (static member op_Explicit: ^a -> int)>
+            (longArray: ^a[]) (segmentLength: int) : Result<bool[], IsPermutationArraySegmentError> =
+        if isNull longArray then Error NullLongArray
+        elif segmentLength <= 0 then Error (InvalidSegmentLength segmentLength)
+        elif longArray.Length = 0 then Error (InvalidLongArrayLength (longArray.Length, 0))
+        elif longArray.Length % segmentLength <> 0 then 
+            Error (NonWholeNumberSegments (longArray.Length, segmentLength))
+        else
+            let m = longArray.Length / segmentLength
+            let result = Array.zeroCreate m
+            let mutable error = None
+            let mutable i = 0
+            while i < m && error.IsNone do
+                let seen = Array.create segmentLength false
+                let mutable valid = true
+                let mutable j = 0
+                while j < segmentLength && valid && error.IsNone do
+                    let num = int longArray.[i * segmentLength + j]
+                    if num < 0 || num >= segmentLength then
+                        error <- Some (IndexOutOfBounds (i, num))
+                    elif not seen.[num] then
+                        seen.[num] <- true
+                    else
+                        valid <- false
+                    j <- j + 1
+                result.[i] <- valid
+                i <- i + 1
+            match error with
+            | Some e -> Error e
+            | None -> Ok result
+
+
+
+    let isPermutationArraySegmentSafe2
+            (longArray: ^a[]) (segmentLength: int) : Result<bool[], IsPermutationArraySegmentError> =
+        if isNull longArray then Error NullLongArray
+        elif segmentLength <= 0 then Error (InvalidSegmentLength segmentLength)
+        elif longArray.Length = 0 then Error (InvalidLongArrayLength (longArray.Length, 0))
+        elif longArray.Length % segmentLength <> 0 then 
+            Error (NonWholeNumberSegments (longArray.Length, segmentLength))
+        else
+            let m = longArray.Length / segmentLength
+            let result = Array.zeroCreate m
+            let mutable error = None
+            let mutable i = 0
+            while i < m && error.IsNone do
+                let seen = Array.create segmentLength false
+                let mutable valid = true
+                let mutable j = 0
+                while j < segmentLength && valid && error.IsNone do
+                    let num = int longArray.[i * segmentLength + j]
+                    if num < 0 || num >= segmentLength then
+                        error <- Some (IndexOutOfBounds (i, num))
+                    elif not seen.[num] then
+                        seen.[num] <- true
+                    else
+                        valid <- false
+                    j <- j + 1
+                result.[i] <- valid
+                i <- i + 1
+            match error with
+            | Some e -> Error e
+            | None -> Ok result
 
 
     type IsTwoCycleError =
@@ -143,3 +242,54 @@ module SequenceProperties =
             match error with
             | Some e -> Error e
             | None -> Ok (noProblems)
+
+
+
+    type DistanceSquaredArraySegmentError =
+        | NullLongArray
+        | NullShortArray
+        | InvalidLongArrayLength of expectedMultiple: int * actual: int
+        | InvalidShortArrayLength of length: int
+        | NonWholeNumberSegments of longLength: int * shortLength: int
+
+    // Safe, Non-Span version
+    let inline distanceSquaredArraySegmentSafe< ^a when ^a: (static member Zero: ^a)
+                                                  and ^a: (static member (+): ^a * ^a -> ^a)
+                                                  and ^a: (static member (-): ^a * ^a -> ^a)
+                                                  and ^a: (static member (*): ^a * ^a -> ^a)>
+            (longArray: ^a[]) (shortArray: ^a[]) : Result<^a[], DistanceSquaredArraySegmentError> =
+        if isNull longArray then Error NullLongArray
+        elif isNull shortArray then Error NullShortArray
+        elif shortArray.Length = 0 then Error (InvalidShortArrayLength shortArray.Length)
+        elif longArray.Length = 0 then Error (InvalidLongArrayLength (shortArray.Length, 0))
+        elif longArray.Length % shortArray.Length <> 0 then 
+            Error (NonWholeNumberSegments (longArray.Length, shortArray.Length))
+        else
+            let n = shortArray.Length
+            let m = longArray.Length / n
+            let result = Array.zeroCreate m
+            for i = 0 to m - 1 do
+                let mutable acc = GenericZero<^a>
+                for j = 0 to n - 1 do
+                    let diff = longArray.[i * n + j] - shortArray.[j]
+                    acc <- acc + diff * diff
+                result.[i] <- acc
+            Ok result
+
+
+    // Unsafe, Non-Span version
+    let inline distanceSquaredArraySegmentUnsafe< ^a when ^a: (static member Zero: ^a)
+                                                    and ^a: (static member (+): ^a * ^a -> ^a)
+                                                    and ^a: (static member (-): ^a * ^a -> ^a)
+                                                    and ^a: (static member (*): ^a * ^a -> ^a)>
+            (longArray: ^a[]) (shortArray: ^a[]) : ^a[] =
+        let n = shortArray.Length
+        let m = longArray.Length / n
+        let result = Array.zeroCreate m
+        for i = 0 to m - 1 do
+            let mutable acc = GenericZero<^a>
+            for j = 0 to n - 1 do
+                let diff = longArray.[i * n + j] - shortArray.[j]
+                acc <- acc + diff * diff
+            result.[i] <- acc
+        result

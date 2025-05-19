@@ -1,6 +1,4 @@
-﻿
-
-namespace CayleySort.Sorting.Tests
+﻿namespace CayleySort.Sorting.Tests
 
 open Xunit
 open System

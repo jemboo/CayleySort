@@ -6,7 +6,7 @@ open ArrayMap
 
 type CoreError =
     | InvertArrayMapError of InvertArrayMapError
-    | ArrayMapProductError of ArrayMapProductError
+    | ArrayMapCompositionError of ArrayMapCompositionError
     | SortedError of IsSortedError
     | PermutationError of IsPermutationError
     | UnsortednessError of DistanceSquaredError
@@ -36,12 +36,12 @@ module CoreError =
         result {
             let! isSorted = isSorted arr |> mapSortedError
             let! isSubarraySorted = isSortedOffset arr offset length |> mapSortedError
-            let! isPermutation = isPermutation arr |> mapPermutationError
+            let! isPermutationSafe = isPermutationSafe arr |> mapPermutationError
             let! unsortedness = unsortednessSquared arr |> mapUnsortednessError
             return {
                 IsSorted = isSorted
                 IsSubarraySorted = isSubarraySorted
-                IsPermutation = isPermutation
+                IsPermutation = isPermutationSafe
                 UnsortednessSquared = unsortedness
             }
         }

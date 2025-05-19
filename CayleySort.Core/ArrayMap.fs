@@ -3,6 +3,8 @@ open System
 
 // an ArrayMap is a discrete function ^a -> ^a, represented by an A:array<^a>, where
 // the input value of the function is the index i of an array, and it's ouput is A[i]
+// All short arrays (of length n), or segments of long arrays (of length m*n) in this module 
+// are expected to be permuations of [|0 .. (n - 1)|]
 module ArrayMap =
 
     // Error type for safe version
@@ -59,7 +61,7 @@ module ArrayMap =
 
 
 
-    type ArrayMapProductError =
+    type ArrayMapCompositionError =
         | NullLeftArray
         | NullRightArray
         | NullProductArray
@@ -68,7 +70,7 @@ module ArrayMap =
         | IndexOutOfBounds of index: int
 
     // Unsafe version
-    let inline arrayMapProductUnsafe< ^a when ^a: (static member op_Explicit: ^a -> int)>
+    let inline arrayMapCompositionUnsafe< ^a when ^a: (static member op_Explicit: ^a -> int)>
                         (lhs: array<^a>) 
                         (rhs: array<^a>) 
                         (prod: array<^a>) 
@@ -82,11 +84,11 @@ module ArrayMap =
 
 
     // Safe version
-    let inline arrayMapProductSafe< ^a when ^a: (static member op_Explicit: ^a -> int)>
+    let inline arrayMapCompositionSafe< ^a when ^a: (static member op_Explicit: ^a -> int)>
                         (lhs: array<^a>) 
                         (rhs: array<^a>) 
                         (prod: array<^a>) 
-                        : Result<array<^a>, ArrayMapProductError> =
+                        : Result<array<^a>, ArrayMapCompositionError> =
         if isNull lhs then Error NullLeftArray
         elif isNull rhs then Error NullRightArray
         elif isNull prod then Error NullProductArray
@@ -103,5 +105,5 @@ module ArrayMap =
             if not allIndicesValid then
                 Error (IndexOutOfBounds invalidIndex)
             else
-                Ok (arrayMapProductUnsafe lhs rhs prod)
+                Ok (arrayMapCompositionUnsafe lhs rhs prod)
 
