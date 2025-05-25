@@ -50,15 +50,7 @@ module CollectionUtils =
         let mn = min n xs.Length
         xs |> List.take mn
 
-    let cartesianProduct 
-            (seq_a: seq<'a>) 
-            (seq_b: seq<'b>) 
-        =
-        seq {  
-            for ae in seq_a do
-               for be in seq_b do
-                  yield (ae, be)
-        }
+
 
     let flattenTupleSeq (tuples: seq<'T * 'T>) : seq<'T> =
         tuples |> Seq.collect (fun (x, y) -> [x; y])
