@@ -50,6 +50,10 @@ module CollectionUtils =
         let mn = min n xs.Length
         xs |> List.take mn
 
+    let takeUpToOrWhile (n: int) (predicate: 'a -> bool) (source: seq<'a>) : seq<'a> =
+        if n < 0 then
+            invalidArg "n" "Number of items must be non-negative"
+        Seq.takeWhile (fun x -> predicate x) (Seq.truncate n source)
 
 
     let flattenTupleSeq (tuples: seq<'T * 'T>) : seq<'T> =

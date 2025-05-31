@@ -1,8 +1,4 @@
 ﻿namespace CayleySort.Core
-open LanguagePrimitives
-open System
-open System.Collections
-open System.Runtime.CompilerServices
 
 module Combinatorics =
 
@@ -26,3 +22,19 @@ module Combinatorics =
                     yield x :: rest]
 
 
+    type FisherYatesError = NullArray
+
+    let fisherYatesShuffle (getRandomIndex: int -> int) 
+                           (initialList: 'a[]) 
+                 : Result<'a[], FisherYatesError> =
+        if isNull initialList then Error FisherYatesError.NullArray
+        else
+            let result = Array.copy initialList
+            let swap (arr: 'a[]) i j =
+                let temp = arr.[i]
+                arr.[i] <- arr.[j]
+                arr.[j] <- temp
+            for i = initialList.Length - 1 downto 1 do
+                let j = getRandomIndex i
+                swap result i (int j)
+            Ok result

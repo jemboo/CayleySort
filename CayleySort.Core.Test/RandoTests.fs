@@ -1,14 +1,11 @@
 ﻿namespace CayleySort.Core.Tests
 
 open Xunit
-open FsUnit.Xunit
-open CayleySort.Core.SequenceProperties
 open System
 open CayleySort.Core
 open FSharp.UMX
-open System.Collections
 
-type RandomTests() =
+type RandoTests() =
 
     // Helper function for chi-squared test for uniformity
     let chiSquaredTest (values: int[]) buckets =

@@ -5,28 +5,6 @@ open CollectionUtils
 
 module SequenceProperties =
 
-    // Generic identity array: [0 .. order-1]
-    let inline identity< ^a when ^a: (static member Zero: ^a)
-                            and ^a: (static member One: ^a)
-                            and ^a: (static member (+): ^a * ^a -> ^a)>
-            (order: int) : ^a[] =
-        if order < 0 then raise (ArgumentException("Order must be non-negative"))
-        let result = Array.zeroCreate order
-        let one = GenericOne<^a>
-        let mutable current = GenericZero<^a>
-        for i = 0 to order - 1 do
-            result.[i] <- current
-            current <- current + one
-        result
-
-    // Generic isIdentity check
-    let inline isIdentity< ^a when ^a: equality
-                              and ^a: (static member Zero: ^a)
-                              and ^a: (static member One: ^a)
-                              and ^a: (static member (+): ^a * ^a -> ^a)>
-            (wh: ^a[]) : bool =
-        arrayEquals wh (identity wh.Length)
-
 
     let inline distanceSquaredUnsafe< ^a when ^a: (static member Zero: ^a)
                                         and ^a: (static member (+): ^a * ^a -> ^a)
@@ -149,7 +127,7 @@ module SequenceProperties =
             (longArray: ^a[]) (segmentLength: int) : Result<bool[], IsPermutationArraySegmentError> =
         if isNull longArray then Error NullLongArray
         elif segmentLength <= 0 then Error (InvalidSegmentLength segmentLength)
-        elif longArray.Length = 0 then Error (InvalidLongArrayLength (longArray.Length, 0))
+        elif longArray.Length = 0 then Error (InvalidLongArrayLength (longArray.Length, segmentLength))
         elif longArray.Length % segmentLength <> 0 then 
             Error (NonWholeNumberSegments (longArray.Length, segmentLength))
         else
@@ -182,7 +160,7 @@ module SequenceProperties =
             (longArray: ^a[]) (segmentLength: int) : Result<bool[], IsPermutationArraySegmentError> =
         if isNull longArray then Error NullLongArray
         elif segmentLength <= 0 then Error (InvalidSegmentLength segmentLength)
-        elif longArray.Length = 0 then Error (InvalidLongArrayLength (longArray.Length, 0))
+        elif longArray.Length = 0 then Error (InvalidLongArrayLength (longArray.Length, segmentLength))
         elif longArray.Length % segmentLength <> 0 then 
             Error (NonWholeNumberSegments (longArray.Length, segmentLength))
         else

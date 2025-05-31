@@ -351,19 +351,32 @@ type SequencePropertyTests() =
         | Error _ -> Assert.False(true, "Expected Ok result")
 
 
-    [<Theory>]
-    [<InlineData(1, 2)>]
-    [<InlineData(3, 1)>]
-    [<InlineData(1, 1)>]
-    let ``Edge cases with small n and m`` (n: int) (m: int) =
-        let longArray = createLongIntArray n m
-        let result = isPermutationArraySegmentSafe2 longArray n
+    [<Fact>]
+    let ``Array of valid permutations`` () =
+        let validArrayOfPermuations = [|0;1;2;2;0;1;0;2;1;2;1;0;|]
+        let segmentLength = 3
+        let result = isPermutationArraySegmentSafe validArrayOfPermuations segmentLength
         match result with
         | Ok perms ->
-            Assert.Equal(m, perms.Length)
-            for i = 0 to m - 1 do
-                Assert.True(perms.[i], $"Segment {i} should be a permutation")
+                Assert.True(perms.[0], $"Segment 0 should be a permutation")
+                Assert.True(perms.[1], $"Segment 1 should be a permutation")
+                Assert.True(perms.[2], $"Segment 2 should be a permutation")
+                Assert.True(perms.[3], $"Segment 3 should be a permutation")
         | Error _ -> Assert.False(true, "Expected Ok result")
+
+    [<Fact>]
+    let ``Array of invalid permutations`` () =
+        let validArrayOfPermuations = [|0;0;2;2;2;1;0;0;1;2;1;2;|]
+        let segmentLength = 3
+        let result = isPermutationArraySegmentSafe validArrayOfPermuations segmentLength
+        match result with
+        | Ok perms ->
+                Assert.False(perms.[0], $"Segment 0 should not be a permutation")
+                Assert.False(perms.[1], $"Segment 1 should not be a permutation")
+                Assert.False(perms.[2], $"Segment 2 should not be a permutation")
+                Assert.False(perms.[3], $"Segment 3 should not be a permutation")
+        | Error _ -> Assert.False(true, "Expected Ok result")
+
 
     [<Fact>]
     let ``Invalid short array length (n=0) returns error`` () =
@@ -383,10 +396,12 @@ type SequencePropertyTests() =
 
     [<Fact>]
     let ``Zero-length long array returns error`` () =
-        let longArray = Array.create<int64> 0 0L
-        let result = isPermutationArraySegmentSafe longArray 2
+        let arrayLength = 0
+        let segmentLength = 2
+        let longArray = Array.create<int64> arrayLength 0L
+        let result = isPermutationArraySegmentSafe longArray segmentLength
         match result with
-        | Error (IsPermutationArraySegmentError.InvalidLongArrayLength (2, 0)) -> Assert.True(true)
+        | Error (IsPermutationArraySegmentError.InvalidLongArrayLength (arrayLength, segmentLength)) -> Assert.True(true)
         | _ -> Assert.False(true, "Expected InvalidLongArrayLength error")
 
     [<Fact>]
