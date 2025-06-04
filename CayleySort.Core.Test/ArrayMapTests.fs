@@ -4,6 +4,7 @@ open Xunit
 open FsUnit.Xunit
 open CayleySort.Core.ArrayMap
 open CayleySort.Core.CollectionUtils
+open System
 
 type ArrayMapTests() =
     // Tests for unsafe version
@@ -121,18 +122,50 @@ type ArrayMapTests() =
         // Arrange
         let n = 5
         let sigma = rotate<int> n // Rotation: [1; 2; 3; 4; 0]
-
-        // Act: Take powers until identity is reached or exceed n + 1
-        let powers = arrayMapPowers sigma
-        let collectedPowers = 
-            Seq.takeWhile (fun arr -> not (isIdentity arr)) powers
-            |> Seq.toList
+        let identityMap = identity<int> n // Identity: [0; 1; 2; 3; 4]
+    
+        // Act: Take the entire orbit
+        let orbit = arrayMapPowers sigma |> Seq.toList
     
         // Assert
-        Assert.Equal(n - 1, collectedPowers.Length) // Should collect exactly n non-identity powers
-        let allPowers = arrayMapPowers sigma |> Seq.take (n + 1) |> Seq.toArray
+        Assert.Equal(n, orbit.Length) // Orbit should have n elements (sigma^1 to sigma^0)
+        Assert.True(isIdentity orbit.[n - 1], "The last element should be the identity")
         for i = 0 to n - 2 do
-            Assert.False(isIdentity allPowers.[i], $"Power {i} should not be the identity")
+            Assert.False(isIdentity orbit.[i], $"Power {i + 1} should not be the identity")
+    
+    [<Fact>]
+    let ``Rotate with length 3 has period 3`` () =
+        // Arrange
+        let n = 3
+        let sigma = rotate<int> n // Rotation: [1; 2; 0]
+        let identityMap = identity<int> n
+    
+        // Act
+        let orbit = arrayMapPowers sigma |> Seq.toList
+    
+        // Assert
+        Assert.Equal(n, orbit.Length) // Orbit should have 3 elements (sigma^1 to sigma^0)
+        Assert.True(isIdentity orbit.[n - 1], "The last element should be the identity")
+        for i = 0 to n - 2 do
+            Assert.False(isIdentity orbit.[i], $"Power {i + 1} should not be the identity")
+
+    [<Fact>]
+    let ``Rotate with length 1 has period 1`` () =
+        // Arrange
+        let n = 1
+        let sigma = rotate<int> n // Rotation: [0]
+    
+        // Act
+        let orbit = arrayMapPowers sigma |> Seq.toList
+    
+        // Assert
+        Assert.Single(orbit) // Orbit should have 1 element (sigma^1 = sigma^0)
+        Assert.True(isIdentity orbit.[0], "The only element should be the identity")
+
+    [<Fact>]
+    let ``Rotate with invalid length fails`` () =
+        // Act & Assert
+        Assert.Throws<ArgumentException>(fun () -> rotate<int> -1 |> ignore)
     
     [<Fact>]
     let ``Conjugation with identity sigma returns tau`` () =

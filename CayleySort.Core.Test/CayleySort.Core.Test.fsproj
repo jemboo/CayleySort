@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ArrayMapGroupTests.fs" />
+    <Compile Include="ArrayMapTests.fs" />
     <Compile Include="CombinatoricsTests.fs" />
+    <Compile Include="RandoTests.fs" />
     <Compile Include="ResultTests.fs" />
     <Compile Include="SequencePropertyTests.fs" />
-    <Compile Include="RandoTests.fs" />
-    <Compile Include="ArrayMapTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

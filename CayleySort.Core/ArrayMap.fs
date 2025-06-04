@@ -148,8 +148,9 @@ module ArrayMap =
 
 
 
-    // Generates an infinite sequence of powers of an ArrayMap: sigma^0, sigma^1, sigma^2, ...
+    // Generates the orbit of an ArrayMap: sigma^1, sigma^2, ..., sigma^0 (identity)
     let inline arrayMapPowers< ^a when ^a: (static member Zero: ^a) and
+                               ^a: equality and
                                ^a: (static member One: ^a) and
                                ^a: (static member (+): ^a * ^a -> ^a) and
                                ^a: (static member op_Explicit: ^a -> int)>
@@ -157,18 +158,21 @@ module ArrayMap =
                 : seq<array<^a>> =
         if isNull sigma then
             invalidArg "sigma" "Input array cannot be null"
-        // Initialize with identity permutation
-        let identityMap = identity< ^a> sigma.Length
-        let current = Array.copy identityMap
+        let n = sigma.Length
+        let identityMap = identity< ^a> n
         seq {
-            while true do
-                // Compute next power: sigma^n = sigma * sigma^(n-1)
-                let next = arrayMapCompositionUnsafe sigma current
-                yield next
-                // Copy next to current for the next iteration
-                Array.blit next 0 current 0 next.Length
+            if isIdentity sigma then
+                yield sigma // If sigma is identity, yield it and stop
+            else
+                let mutable current = Array.copy sigma // Start with sigma^1
+                yield current
+                let mutable next = arrayMapCompositionUnsafe sigma current
+                while not (isIdentity next) do
+                    yield next
+                    current <- next
+                    next <- arrayMapCompositionUnsafe sigma current
+                yield next // Yield the identity (sigma^0)
         }
-
 
 
     type ArrayMapConjugationError =
